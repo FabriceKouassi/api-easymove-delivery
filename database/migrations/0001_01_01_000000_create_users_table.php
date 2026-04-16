@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('firstname');
-            $table->string('email')->unique();
+            $table->string('email')->nullable()->unique();
             $table->string('phone')->unique();
             $table->enum('role', RoleEnum::values());
             $table->string('img')->nullable();

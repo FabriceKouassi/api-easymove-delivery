@@ -18,4 +18,30 @@ class AuthController extends Controller
             'user' => $user
         ], 200);
     }
+
+    public function login(Request $request)
+    {
+        $data = $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required',
+        ]);
+
+        $user = User::query()->with(['company', 'role'])->where('email', $data['email'])->first();
+
+        if (! $user || ! Hash::check($data['password'], $user->password)) {
+            Log::alert('Identifiants incorrects');
+            throw ValidationException::withMessages([
+                'email' => ['Identifiants incorrects.'],
+            ]);
+        }
+
+        // Générer un token
+        $token = $user->createToken('api_token')->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'token'   => $token,
+            'user'    => $user,
+        ]);
+    }
 }

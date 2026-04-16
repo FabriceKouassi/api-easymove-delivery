@@ -26,19 +26,12 @@ class RegisterRequest extends ApiFormRequest
     {
         return [
             'phone' => ['required', 'string', 'regex:/^\+?[0-9]{8,15}$/', 'max:20', Rule::unique('users', 'phone')],
-            'email' => ['required', 'string', 'email', Rule::unique('users', 'email')],
+            'email' => ['nullable', 'string', 'email', Rule::unique('users', 'email')],
             'name' => ['required', 'string', 'max:255'],
             'firstname' => ['required', 'string', 'max:255'],
             'role' => ['required', 'string', Rule::in(RoleEnum::values())],
             'img' => ['nullable', 'image', 'max:2048']
         ];
-    }
-
-    protected function prepareForValidation(): void
-    {
-        $this->merge([
-            'email' => strtolower($this->email),
-        ]);
     }
 
 }
