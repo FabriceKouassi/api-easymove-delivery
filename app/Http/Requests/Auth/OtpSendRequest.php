@@ -4,10 +4,9 @@ namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\ApiFormRequest;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class LoginRequest extends ApiFormRequest
+class OtpSendRequest extends ApiFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +24,7 @@ class LoginRequest extends ApiFormRequest
     public function rules(): array
     {
         return [
-            'phone' => ['required', 'string', 'regex:/^\+?[0-9]{8,15}$/', 'max:20', Rule::unique('users', 'phone')],
+            'phone' => ['required', 'string', 'regex:/^\+?[0-9]{8,15}$/', 'max:20', 'exists:users,phone'],
         ];
     }
 }

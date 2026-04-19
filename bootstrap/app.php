@@ -97,6 +97,18 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 429);
             }
         });
+        $exceptions->render(function (BadMethodCallException $e, Request $request) {
+            Log::error('Trop de reqêtes envoyés. Réessayer plus tard.', [
+                'message' => "Erreur d’authentification API. Vérifiez la configuration des tokens.",
+                'error' => $e->getMessage(),
+                'code' => 429,
+            ]);
+            if (str_contains($e->getMessage(), 'createToken')) {
+                return response()->json([
+                    'message' => 'Erreur d’authentification API. Vérifiez la configuration des tokens.',
+                ], 500);
+            }
+        });
         $exceptions->render(function (QueryException $e, Request $request) {
 
             if (!$request->is('api/*')) {
@@ -128,6 +140,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
                 default => response()->json([
                     'message' => "Erreur base de données.",
+                    'error' => $e->getMessage(),
                     'code'    => $code,
                 ], 500),
             };
