@@ -30,7 +30,8 @@ class RegisterRequest extends ApiFormRequest
             'name' => ['required', 'string', 'max:255'],
             'firstname' => ['required', 'string', 'max:255'],
             'role' => ['required', 'string', Rule::in(RoleEnum::values())],
-            'img' => ['nullable', 'image', 'max:2048']
+            'img' => ['nullable', 'file', 'mimes:png,jpg', 'max:2048'],
+            'birthday_date' => ['nullable', 'date_format:Y-m-d', 'before:today']
         ];
     }
 

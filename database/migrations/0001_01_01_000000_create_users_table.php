@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('firstname');
             $table->string('email')->nullable()->unique();
             $table->string('phone')->unique();
+            $table->date('birthday_date')->nullable();
             $table->enum('role', RoleEnum::values());
             $table->string('img')->nullable();
             $table->boolean('isValidated')->default(false);

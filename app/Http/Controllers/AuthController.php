@@ -8,7 +8,10 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\OtpCheckRequest;
 use App\Models\User;
 use App\Services\OtpService;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+
+use function Symfony\Component\Clock\now;
 
 class AuthController extends Controller
 {
@@ -22,7 +25,29 @@ class AuthController extends Controller
     {
         $data = $request->validated();
 
-        if($data['role'] === RoleEnum::CLIENT->value || $data['role'] === RoleEnum::ADMIN->value)
+        if($data['role'] === RoleEnum::CONDUCTEUR->value)
+        {
+            if ($request->hasFile('img') === false) {
+                throw new HttpException(403, "Veuillez ajouter votre image");
+            }
+
+            if ($request->hasFile('img')) {
+                $file = $request->file('img');
+                $userFolder = $data['phone'] . '-' . $data['name'];
+
+                $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+
+                $path = Storage::disk('public')->putFileAs(
+                    'users/' . $userFolder,
+                    $file,
+                    $filename
+                );
+
+                $data['img'] = $path;
+            }
+        }
+
+        if($data['role'] !== RoleEnum::CONDUCTEUR->value)
         {
             $data['isValidated'] = true;
         }
@@ -70,6 +95,9 @@ class AuthController extends Controller
         $user = User::query()->where("phone", $data['phone'])->first();
 
         $token = $user->createToken('api_token')->plainTextToken;
+
+        $user->last_login_at = now();
+        $user->save();
 
         return response()->json([
             'success' => true,
