@@ -21,6 +21,7 @@ return new class extends Migration
             $table->enum('role', RoleEnum::values());
             $table->string('img')->nullable();
             $table->boolean('isValidated')->default(false);
+            $table->timestamp('last_login_at')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

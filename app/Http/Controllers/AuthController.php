@@ -8,8 +8,6 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\OtpCheckRequest;
 use App\Models\User;
 use App\Services\OtpService;
-use Exception;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AuthController extends Controller
@@ -24,7 +22,7 @@ class AuthController extends Controller
     {
         $data = $request->validated();
 
-        if($data['role'] === RoleEnum::CLIENT->value)
+        if($data['role'] === RoleEnum::CLIENT->value || $data['role'] === RoleEnum::ADMIN->value)
         {
             $data['isValidated'] = true;
         }
@@ -62,7 +60,7 @@ class AuthController extends Controller
 
         $valid = $this->otpService->check($data['phone'], $data['code']);
 
-        if (! $valid) {
+        if (!$valid) {
             return response()->json([
                 'success' => false,
                 'message' => 'Code invalide ou expiré',
@@ -71,7 +69,6 @@ class AuthController extends Controller
 
         $user = User::query()->where("phone", $data['phone'])->first();
 
-        // token Sanctum
         $token = $user->createToken('api_token')->plainTextToken;
 
         return response()->json([
