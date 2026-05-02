@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RoleEnum;
-use App\Http\Requests\CreateVehiculeRequest;
+use App\Http\Requests\CreatePermisRequest;
+use App\Models\Permis;
 use App\Models\User;
-use App\Models\Vehicule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class VehiculeController extends Controller
+class PermisController extends Controller
 {
-    public function create(CreateVehiculeRequest $request)
+    public function create(CreatePermisRequest $request)
     {
         $data = $request->validated();
         $user = User::query()->where('phone', $data['user_phone'])->first();
@@ -28,9 +28,9 @@ class VehiculeController extends Controller
             throw new HttpException(403, "Action non autorisée");
         }
 
-        if ($request->hasFile('car_img')) {
-            $file = $request->file('car_img');
-            $folder = 'users/' . $user->phone . '-' . $user->name . '/vehicule';
+        if ($request->hasFile('front_img')) {
+            $file = $request->file('front_img');
+            $folder = 'users/' . $user->phone . '-' . $user->name . '/permis';
 
             $filename = uniqid() . '.' . $file->getClientOriginalExtension();
 
@@ -40,12 +40,12 @@ class VehiculeController extends Controller
                 $filename
             );
 
-            $data['car_img'] = $path;
+            $data['front_img'] = $path;
         }
 
-        if ($request->hasFile('carte_grise_img')) {
-            $file = $request->file('carte_grise_img');
-            $folder = 'users/' . $user->phone . '-' . $user->name . '/vehicule';
+        if ($request->hasFile('back_img')) {
+            $file = $request->file('back_img');
+            $folder = 'users/' . $user->phone . '-' . $user->name . '/permis';
 
             $filename = uniqid() . '.' . $file->getClientOriginalExtension();
 
@@ -55,13 +55,28 @@ class VehiculeController extends Controller
                 $filename
             );
 
-            $data['carte_grise_img'] = $path;
+            $data['back_img'] = $path;
         }
 
-        Vehicule::query()->create($data);
+        if ($request->hasFile('human_selfie_img')) {
+            $file = $request->file('human_selfie_img');
+            $folder = 'users/' . $user->phone . '-' . $user->name . '/permis';
+
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+
+            $path = Storage::disk('public')->putFileAs(
+                $folder,
+                $file,
+                $filename
+            );
+
+            $data['human_selfie_img'] = $path;
+        }
+
+        Permis::query()->create($data);
 
         return response()->json([
-            'message' => 'Vehicule enregistré',
+            'message' => 'Permis de conduire enregistré',
         ]);
     }
 }

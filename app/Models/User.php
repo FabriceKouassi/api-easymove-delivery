@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -35,6 +36,11 @@ class User extends Authenticatable
             'last_login_at' => 'datetime',
             'isValidated' => 'boolean',
         ];
+    }
+
+    public function permis(): HasOne
+    {
+        return $this->hasOne(Permis::class, 'user_id');
     }
 
 }

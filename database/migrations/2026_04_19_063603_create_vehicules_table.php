@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\CarTypeEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,6 +14,15 @@ return new class extends Migration
     {
         Schema::create('vehicules', function (Blueprint $table) {
             $table->id();
+            $table->string('car_img')->nullable();
+            $table->string('carte_grise_img')->nullable();
+            $table->enum('car_type', CarTypeEnum::values());
+            $table->string('car_brand');
+            $table->string('car_model');
+            $table->string('car_color');
+            $table->string('immatriculation_number');
+            $table->string('production_year');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -3,8 +3,12 @@
 namespace App\Services;
 
 use App\Models\Otp;
+use Exception;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Twilio\Rest\Client;
 
 class OtpService
 {
@@ -18,11 +22,9 @@ class OtpService
         }
 
         // 2. Cooldown (anti spam discret)
-        if ($otp && now()->diffInSeconds($otp->created_at) < 60) {
-            throw ValidationException::withMessages([
-                'phone' => 'Veuillez patienter avant de redemander un code'
-            ]);
-        }
+        // if ($otp && now()->diffInSeconds($otp->created_at) < 60) {
+        //     throw new HttpException(403, "Veuillez patienter avant de redemander un code");
+        // }
 
         // 3. Limite soft (coût maîtrisé sans frustrer)
         $count = Otp::where('phone', $phone)
@@ -30,9 +32,7 @@ class OtpService
             ->count();
 
         if ($count >= 5) {
-            throw ValidationException::withMessages([
-                'phone' => 'Trop de demandes aujourd’hui'
-            ]);
+            throw new HttpException(403, "Trop de demandes aujourd'hui");
         }
 
         Otp::query()->where('phone', $phone)->delete();
@@ -46,7 +46,25 @@ class OtpService
             'attempts' => 0,
         ]);
 
-        //send otp
+
+        //send otp //+18777804236
+
+        $id = config('services.twilio.sid');
+        $token = config('services.twilio.token');
+
+        // $twilio = new Client($id, $token);
+        // try {
+        //     $twilio->messages->create(
+        //         $phone,
+        //         [
+        //             "body" => "Votre OTP est: $code",
+        //             "from" => config("services.twilio.from"),
+        //         ]
+        //     );
+        // } catch (Exception $e) {
+        //     Log::error($e->getMessage());
+        //     throw new HttpException(403, "Erreur lors de l'envoi du SMS");
+        // }
 
         return $code;
     }
