@@ -29,7 +29,7 @@ class RegisterRequest extends ApiFormRequest
             'email' => ['nullable', 'string', 'email', Rule::unique('users', 'email')],
             'name' => ['required', 'string', 'max:255'],
             'firstname' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'string', Rule::in(RoleEnum::values())],
+            'role' => ['required', 'string', Rule::in([RoleEnum::CLIENT->value, RoleEnum::CONDUCTEUR->value])],
             'img' => ['nullable', 'file', 'mimes:png,jpg', 'max:2048'],
             'birthday_date' => ['nullable', 'date_format:Y-m-d', 'before:today']
         ];

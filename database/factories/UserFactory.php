@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\RoleEnum;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -25,8 +26,13 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => 'AKO',
+            'firstname' => 'Fabrice',
+            'phone' => '+2250788463692',
+            'email' => 'fabricekouassiako@gmail.com',
+            'role' => RoleEnum::ADMIN->value,
+            'isValidated' => true,
+            'birthday_date' => '2020-05-28',
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),

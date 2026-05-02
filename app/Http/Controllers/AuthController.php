@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RoleEnum;
+use App\Http\Requests\Auth\AdminLoginRequest;
 use App\Http\Requests\Auth\OtpSendRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\OtpCheckRequest;
 use App\Models\User;
 use App\Services\OtpService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 use function Symfony\Component\Clock\now;
@@ -103,6 +108,36 @@ class AuthController extends Controller
             'success' => true,
             'token'   => $token,
             'user'    => $user,
+        ]);
+    }
+
+    public function adminLogin(AdminLoginRequest $request)
+    {
+        $data = $request->validated();
+
+        $user = User::query()->where('email', $data['email'])->first();
+
+        if (! $user || ! Hash::check($data['password'], $user->password)) {
+            throw new HttpException(403, "Identifiants incorrects.");
+        }
+
+        // Générer un token
+        $token = $user->createToken('api_token')->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'token'   => $token,
+            'user'    => $user,
+        ]);
+    }
+
+    public function adminLogout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Déconnexion réussie',
         ]);
     }
 }

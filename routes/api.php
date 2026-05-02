@@ -15,6 +15,11 @@ Route::prefix('/auth')->group(function () {
             Route::post('/send', 'sendOtp');
             Route::post('/check', 'checkOtpLogin')->middleware('throttle:5,1');
         });
+
+        Route::prefix('/admin')->group(function () {
+            Route::post('/login', 'adminLogin');
+            Route::get('/logout', 'adminLogout')->middleware(['auth:sanctum']);
+        });
     });
 
     Route::prefix('/register/conducteur')->group(function () {
