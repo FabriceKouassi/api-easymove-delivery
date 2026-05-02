@@ -73,10 +73,11 @@ class PermisController extends Controller
             $data['human_selfie_img'] = $path;
         }
 
-        Permis::query()->create($data);
+        $permis = Permis::query()->create($data);
 
         return response()->json([
             'message' => 'Permis de conduire enregistré',
+            'permis' => $permis->load('user')
         ]);
     }
 }

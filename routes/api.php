@@ -18,6 +18,7 @@ Route::prefix('/auth')->group(function () {
 
         Route::prefix('/admin')->group(function () {
             Route::post('/login', 'adminLogin');
+            // Route::post('/create', 'adminCreate')->middleware(['auth:sanctum']);
             Route::get('/logout', 'adminLogout')->middleware(['auth:sanctum']);
         });
     });

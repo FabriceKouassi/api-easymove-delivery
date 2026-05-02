@@ -43,4 +43,9 @@ class User extends Authenticatable
         return $this->hasOne(Permis::class, 'user_id');
     }
 
+    public function vehicule(): HasOne
+    {
+        return $this->hasOne(Vehicule::class, 'user_id');
+    }
+
 }

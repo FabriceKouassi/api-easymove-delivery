@@ -58,10 +58,11 @@ class VehiculeController extends Controller
             $data['carte_grise_img'] = $path;
         }
 
-        Vehicule::query()->create($data);
+        $vehicule = Vehicule::query()->create($data);
 
         return response()->json([
             'message' => 'Vehicule enregistré',
+            'vehicule' => $vehicule->load('user')
         ]);
     }
 }
