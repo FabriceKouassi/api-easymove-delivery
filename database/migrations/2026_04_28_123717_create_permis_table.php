@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('human_selfie_img')->nullable();
             $table->date('expiry_date');
             $table->string('driving_licence_id');
+            $table->boolean('isValidated')->default(false);
+            $table->string('motif_refus')->nullable();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });

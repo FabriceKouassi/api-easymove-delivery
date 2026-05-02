@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'human_selfie_img',
     'expiry_date',
     'driving_licence_id',
+    'isValidated', 'motif_refus'
 ])]
 
 class Permis extends Model
@@ -22,6 +23,7 @@ class Permis extends Model
     protected function casts(): array
     {
         return [
+            'isValidated' => 'boolean',
             'expiry_date' => 'date',
         ];
     }

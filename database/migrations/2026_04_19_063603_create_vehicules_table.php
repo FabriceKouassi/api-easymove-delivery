@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('car_color');
             $table->string('immatriculation_number');
             $table->string('production_year');
+            $table->boolean('isValidated')->default(false);
+            $table->string('motif_refus')->nullable();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });
